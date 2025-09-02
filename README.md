@@ -63,7 +63,7 @@ Nginx / Apache
 
 根据提示填写数据库信息和管理员账号，即可完成安装。
 
-详细的图文教程请参考： **使用教程**
+详细的图文教程请参考： **[使用教程](https://github.com/Meguminlove/qingjiu-auth-frontend/blob/main/%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B.md)**
 
 📜 更新日志
 我们致力于不断优化和完善程序。
@@ -76,7 +76,7 @@ v1.0.1 (当前版本) - 稳定修复与体验优化版
 
 代码重构: 将所有页面重构为后端一体化处理，提升了系统的稳定性和安全性。
 
-详细的更新历史请参考： **更新日志**
+详细的更新历史请参考： **[更新日志](https://github.com/Meguminlove/qingjiu-auth-frontend/blob/main/%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97.md)**
 
 🤝 贡献与致谢
 欢迎所有开发者为此项目贡献代码。您可以 Fork 本仓库，创建您的功能分支，然后提交 Pull Request。
@@ -88,4 +88,5 @@ v1.0.1 (当前版本) - 稳定修复与体验优化版
 图标库: Lucide Icons
 
 📄 开源许可
+
 本程序采用 MIT License 开源。
