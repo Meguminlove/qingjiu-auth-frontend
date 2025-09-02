@@ -89,4 +89,5 @@ v1.0.1 (当前版本) - 稳定修复与体验优化版
 
 📄 开源许可
 
-本程序采用 MIT License 开源。
+本程序采用 [MIT License](https://github.com/Meguminlove/qingjiu-auth-frontend/blob/main/MIT%20License.md) 开源。
+
