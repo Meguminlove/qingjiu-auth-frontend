@@ -91,3 +91,12 @@ v1.0.1 (当前版本) - 稳定修复与体验优化版
 
 本程序采用 [MIT License](https://github.com/Meguminlove/qingjiu-auth-frontend/blob/main/MIT%20License.md) 开源。
 
+<img width="1920" height="1040" alt="授权查询" src="https://github.com/user-attachments/assets/58924367-73bc-4975-92ac-2c0c91ef9848" />
+<img width="1920" height="1040" alt="更换授权" src="https://github.com/user-attachments/assets/f301a453-6c1e-412b-859e-be0fbdc78556" />
+<img width="1920" height="1040" alt="程序下载" src="https://github.com/user-attachments/assets/167b7650-af9c-4237-8efb-11eccdf88384" />
+<img width="1920" height="1040" alt="后台主页" src="https://github.com/user-attachments/assets/31081d0c-2c67-492e-8c8e-4152bd8f5ef6" />
+<img width="1920" height="1040" alt="网站设置" src="https://github.com/user-attachments/assets/68dd84d9-4404-48f5-ac62-278fb4b3c5ba" />
+<img width="1920" height="1040" alt="API设置" src="https://github.com/user-attachments/assets/190fda5f-0119-408e-97e2-12fb148a8fe8" />
+<img width="1920" height="1040" alt="版本设置" src="https://github.com/user-attachments/assets/c86a4d69-9e99-4c0b-98e4-5ec69754f270" />
+
+
