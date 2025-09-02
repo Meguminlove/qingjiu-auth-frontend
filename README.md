@@ -1,6 +1,8 @@
 小奏授权查询前端 - 专为晴玖授权站打造
 这是一个轻量级、美观且功能强大的PHP前端查询系统，专为 晴玖授权系统 设计。它旨在提供一个可独立部署的用户前端，通过API与您的晴玖主授权站无缝对接，为您的客户提供授权查询、域名更换、程序下载等一系列便捷的自助服务。
 
+演示站点 [https://auth.mofuc.cn/](https://auth.mofuc.cn/)
+
 ✨ 主要功能
 本程序旨在简化授权管理的流程，为终端用户提供最佳体验。
 
@@ -98,5 +100,6 @@ v1.0.1 (当前版本) - 稳定修复与体验优化版
 <img width="1920" height="1040" alt="网站设置" src="https://github.com/user-attachments/assets/68dd84d9-4404-48f5-ac62-278fb4b3c5ba" />
 <img width="1920" height="1040" alt="API设置" src="https://github.com/user-attachments/assets/190fda5f-0119-408e-97e2-12fb148a8fe8" />
 <img width="1920" height="1040" alt="版本设置" src="https://github.com/user-attachments/assets/c86a4d69-9e99-4c0b-98e4-5ec69754f270" />
+
 
 
