@@ -121,46 +121,10 @@ if ($is_post_request) {
     }
 }
 
+$page_title = '更换授权';
+$current_page = 'domain_manager.php';
+require_once 'header.php';
 ?>
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>更换授权 - <?php echo htmlspecialchars($settings['site_name'] ?? '授权查询系统'); ?></title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        body { background-color: #f7fafc; }
-        .nav-link.active { background-color: #ef4444; color: white; }
-        .nav-link { transition: background-color 0.2s ease-in-out; }
-    </style>
-</head>
-<body class="font-sans antialiased">
-
-    <div class="container mx-auto max-w-4xl p-4">
-        <!-- Header Navigation -->
-        <header class="bg-white rounded-lg shadow-md p-2 mb-6">
-            <nav class="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-2">
-                <a class="w-full sm:w-auto text-center px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100" href="./query.php">
-                    <i data-lucide="search" class="inline-block w-4 h-4 mr-1"></i>授权查询
-                </a>
-                <a class="w-full sm:w-auto text-center px-4 py-2 rounded-md text-sm font-medium nav-link active" href="./domain_manager.php">
-                   <i data-lucide="replace" class="inline-block w-4 h-4 mr-1"></i>更换授权
-                </a>
-                <a class="w-full sm:w-auto text-center px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100" href="./activate.php">
-                    <i data-lucide="user-check" class="inline-block w-4 h-4 mr-1"></i>自助授权
-                </a>
-                <a class="w-full sm:w-auto text-center px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100" href="./auth.php">
-                    <i data-lucide="message-circle" class="inline-block w-4 h-4 mr-1"></i>联系客服
-                </a>
-                <a class="w-full sm:w-auto text-center px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100" href="./download.php">
-                    <i data-lucide="download" class="inline-block w-4 h-4 mr-1"></i>下载程序
-                </a>
-            </nav>
-        </header>
-
-        <main>
             <!-- Results Area -->
             <div id="results-container" class="mb-6" aria-live="polite">
                 <?php if (!empty($error_message)): ?>
@@ -210,9 +174,9 @@ if ($is_post_request) {
                 </form>
             </div>
              <?php endif; ?>
+
+<?php require_once 'footer.php'; ?>
         </main>
-        
-        <?php require_once 'footer.php'; ?>
     </div>
 
     <script>

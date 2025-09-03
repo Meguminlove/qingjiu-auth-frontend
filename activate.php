@@ -167,6 +167,27 @@ if ($is_post_request) {
                     $result_data = $final_response['data'] ?? null;
                     $success_message = "授权成功！您的授权信息如下。";
                     $step = 5;
+
+                    // [NEW] Backup the successful authorization to local database
+                    if ($result_data && file_exists(__DIR__ . '/config.php')) {
+                        $conn_backup = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+                        if (!$conn_backup->connect_error) {
+                            $conn_backup->set_charset('utf8mb4');
+                            $stmt = $conn_backup->prepare(
+                                "REPLACE INTO local_authorizations (product_id, auth_domain, auth_email, license_key) VALUES (?, ?, ?, ?)"
+                            );
+                            // Bind parameters
+                            $p_id = $result_data['product_id'];
+                            $p_domain = $result_data['auth_domain'];
+                            $p_email = $result_data['auth_email'];
+                            $p_key = $result_data['license_key'];
+                            $stmt->bind_param("isss", $p_id, $p_domain, $p_email, $p_key);
+                            $stmt->execute();
+                            $stmt->close();
+                            $conn_backup->close();
+                        }
+                    }
+
                     session_destroy();
                 } else {
                     $error_message = $response['message'] ?? '域名绑定失败，请联系客服。';
@@ -183,91 +204,66 @@ elseif (!$is_post_request && (!isset($_GET['step']) || $_GET['step'] == 1)) {
     }
 }
 
+$page_title = '自助授权';
+$current_page = 'activate.php';
+require_once 'header.php';
 ?>
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>自助授权 - <?php echo htmlspecialchars($settings['site_name'] ?? '授权查询系统'); ?></title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-</head>
-<body class="bg-gray-50 font-sans antialiased">
-    <div class="container mx-auto max-w-2xl p-4">
-        <header class="bg-white rounded-lg shadow-md p-2 mb-6">
-            <nav class="flex items-center justify-center space-x-2">
-                 <a class="px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100" href="./query.php">授权查询</a>
-                 <a class="px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100" href="./domain_manager.php">更换授权</a>
-                 <a class="px-4 py-2 rounded-md text-sm font-medium bg-red-500 text-white" href="./activate.php">自助授权</a>
-                 <a class="px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100" href="./auth.php">联系客服</a>
-                 <a class="px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100" href="./download.php">下载程序</a>
-            </nav>
-        </header>
-
-        <main class="bg-white rounded-lg shadow-md p-8">
+        <div class="bg-white rounded-lg shadow-md p-6 sm:p-8">
             <div class="mb-6">
                 <?php if ($error_message): ?>
-                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4" role="alert"><p><?php echo htmlspecialchars($error_message); ?></p></div>
+                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md" role="alert"><p><?php echo htmlspecialchars($error_message); ?></p></div>
                 <?php endif; ?>
                 <?php if ($success_message): ?>
-                <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4" role="alert"><p><?php echo $success_message; ?></p></div>
+                <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-md" role="alert"><p><?php echo $success_message; ?></p></div>
                 <?php endif; ?>
             </div>
 
             <!-- Step 1: Card Key -->
             <?php if ($step === 1): ?>
-            <h2 class="text-2xl font-bold text-center mb-6">自助授权 - 第1步/共4步</h2>
-            <form action="activate.php" method="POST">
-                <div class="space-y-4">
-                    <div>
-                        <label for="card_key" class="block text-sm font-medium text-gray-700">授权卡密</label>
-                        <input type="text" name="card_key" id="card_key" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
-                    </div>
-                    <button type="submit" name="submit_step1" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">下一步</button>
+            <h2 class="text-xl sm:text-2xl font-bold text-center text-gray-800 mb-6">自助授权 - 第1步 / 共4步</h2>
+            <form action="activate.php" method="POST" class="space-y-4 max-w-md mx-auto">
+                <div>
+                    <label for="card_key" class="block text-sm font-medium text-gray-700">授权卡密</label>
+                    <input type="text" name="card_key" id="card_key" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
                 </div>
+                <button type="submit" name="submit_step1" class="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">下一步</button>
             </form>
             <?php endif; ?>
 
             <!-- Step 2: Email -->
             <?php if ($step === 2): ?>
-            <h2 class="text-2xl font-bold text-center mb-6">自助授权 - 第2步/共4步</h2>
-            <form action="activate.php" method="POST">
-                 <div class="space-y-4">
-                    <div>
-                        <label for="email" class="block text-sm font-medium text-gray-700">联系邮箱</label>
-                        <input type="email" name="email" id="email" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
-                    </div>
-                    <button type="submit" name="submit_step2" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">生成授权密钥</button>
+            <h2 class="text-xl sm:text-2xl font-bold text-center text-gray-800 mb-6">自助授权 - 第2步 / 共4步</h2>
+            <form action="activate.php" method="POST" class="space-y-4 max-w-md mx-auto">
+                 <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700">联系邮箱</label>
+                    <input type="email" name="email" id="email" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="用于接收授权凭证" required>
                 </div>
+                <button type="submit" name="submit_step2" class="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">生成授权密钥</button>
             </form>
             <?php endif; ?>
 
             <!-- Step 3: License Key -->
             <?php if ($step === 3): ?>
-             <h2 class="text-2xl font-bold text-center mb-6">自助授权 - 第3步/共4步</h2>
-            <form action="activate.php" method="POST">
-                <div class="space-y-4">
-                    <div>
-                        <label for="license_key" class="block text-sm font-medium text-gray-700">授权密钥</label>
-                        <input type="text" name="license_key" id="license_key" value="<?php echo htmlspecialchars($_SESSION['activate_license_key'] ?? ''); ?>" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
-                    </div>
-                     <button type="submit" name="submit_step3" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">下一步</button>
+             <h2 class="text-xl sm:text-2xl font-bold text-center text-gray-800 mb-6">自助授权 - 第3步 / 共4步</h2>
+            <form action="activate.php" method="POST" class="space-y-4 max-w-md mx-auto">
+                <div>
+                    <label for="license_key" class="block text-sm font-medium text-gray-700">授权密钥</label>
+                    <input type="text" name="license_key" id="license_key" value="<?php echo htmlspecialchars($_SESSION['activate_license_key'] ?? ''); ?>" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
+                     <p class="mt-2 text-xs text-gray-500">请务必复制并妥善保管您的授权密钥，它是您授权的唯一凭证。</p>
                 </div>
+                 <button type="submit" name="submit_step3" class="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">下一步</button>
             </form>
             <?php endif; ?>
 
             <!-- Step 4: Domain -->
              <?php if ($step === 4): ?>
-             <h2 class="text-2xl font-bold text-center mb-6">自助授权 - 第4步/共4步</h2>
-            <form action="activate.php" method="POST">
-                 <div class="space-y-4">
-                    <div>
-                        <label for="domain" class="block text-sm font-medium text-gray-700">授权域名</label>
-                        <input type="text" name="domain" id="domain" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" placeholder="例如：example.com" required>
-                    </div>
-                    <button type="submit" name="submit_step4" class="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700">完成授权</button>
+             <h2 class="text-xl sm:text-2xl font-bold text-center text-gray-800 mb-6">自助授权 - 第4步 / 共4步</h2>
+            <form action="activate.php" method="POST" class="space-y-4 max-w-md mx-auto">
+                 <div>
+                    <label for="domain" class="block text-sm font-medium text-gray-700">授权域名</label>
+                    <input type="text" name="domain" id="domain" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="例如：example.com" required>
                 </div>
+                <button type="submit" name="submit_step4" class="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">完成授权</button>
             </form>
             <?php endif; ?>
 
@@ -290,9 +286,10 @@ elseif (!$is_post_request && (!isset($_GET['step']) || $_GET['step'] == 1)) {
                 </button>
             </div>
             <?php endif; ?>
-        </main>
+        </div>
 
-        <?php require_once 'footer.php'; ?>
+<?php require_once 'footer.php'; ?>
+        </main>
     </div>
     
     <script>

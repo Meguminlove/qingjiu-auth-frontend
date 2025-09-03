@@ -42,17 +42,19 @@ if ($step === 3 && $_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 $conn->set_charset('utf8mb4');
 
-                $sql_admins = "CREATE TABLE IF NOT EXISTS `admins` (`id` int(11) NOT NULL AUTO_INCREMENT, `username` varchar(50) NOT NULL, `password` varchar(255) NOT NULL, PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
+                // [FIXED] Added UNIQUE KEY to username to prevent duplicates
+                $sql_admins = "CREATE TABLE IF NOT EXISTS `admins` (`id` int(11) NOT NULL AUTO_INCREMENT, `username` varchar(50) NOT NULL, `password` varchar(255) NOT NULL, PRIMARY KEY (`id`), UNIQUE KEY `uniq_username` (`username`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
                 $sql_settings = "CREATE TABLE IF NOT EXISTS `settings` (`setting_key` varchar(50) NOT NULL, `setting_value` text, PRIMARY KEY (`setting_key`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
+                $sql_local_auths = "CREATE TABLE IF NOT EXISTS `local_authorizations` (`id` int(11) NOT NULL AUTO_INCREMENT, `product_id` int(11) NOT NULL, `auth_domain` varchar(255) NOT NULL, `auth_email` varchar(255) NOT NULL, `license_key` varchar(255) NOT NULL, `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (`id`), UNIQUE KEY `uniq_auth` (`product_id`,`auth_domain`,`auth_email`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
 
-                if ($conn->query($sql_admins) && $conn->query($sql_settings)) {
+                if ($conn->query($sql_admins) && $conn->query($sql_settings) && $conn->query($sql_local_auths)) {
                     $hashed_password = password_hash($admin_pass, PASSWORD_DEFAULT);
-                    $stmt_admin = $conn->prepare("INSERT INTO `admins` (username, password) VALUES (?, ?)");
+                    // [FIXED] Changed from INSERT to REPLACE to handle re-installation gracefully
+                    $stmt_admin = $conn->prepare("REPLACE INTO `admins` (username, password) VALUES (?, ?)");
                     $stmt_admin->bind_param("ss", $admin_user, $hashed_password);
                     $stmt_admin->execute();
                     $stmt_admin->close();
                     
-                    // [MODIFIED] 更新了默认设置项
                     $default_settings = [
                         'site_name' => '小奏授权查询系统', 
                         'site_keywords' => '授权查询, 源码授权', 
@@ -67,10 +69,17 @@ if ($step === 3 && $_SERVER['REQUEST_METHOD'] === 'POST') {
                         'update_version' => 'v1.0.0', 
                         'update_log' => '初始版本发布。', 
                         'system_announcement' => '欢迎使用本系统！',
-                        'query_product_id' => '1'
+                        'query_product_id' => '1',
+                        'smtp_host' => '',
+                        'smtp_port' => '587',
+                        'smtp_secure' => 'tls',
+                        'smtp_user' => '',
+                        'smtp_pass' => '',
+                        'smtp_from_email' => '',
+                        'smtp_from_name' => '授权系统',
                     ];
                     
-                    $stmt_settings = $conn->prepare("INSERT INTO `settings` (setting_key, setting_value) VALUES (?, ?)");
+                    $stmt_settings = $conn->prepare("REPLACE INTO `settings` (setting_key, setting_value) VALUES (?, ?)");
                     foreach ($default_settings as $key => $value) {
                          $stmt_settings->bind_param("ss", $key, $value);
                          $stmt_settings->execute();

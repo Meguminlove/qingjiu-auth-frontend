@@ -29,47 +29,11 @@ if (file_exists(__DIR__ . '/config.php')) {
 // 从数据库设置中获取值
 $qq_number = htmlspecialchars($settings['customer_service_qq'] ?? '尚未设置');
 $wechat_qr_url = htmlspecialchars($settings['wechat_qrcode_url'] ?? '');
+$page_title = '联系客服';
+$current_page = 'auth.php';
 
+require_once 'header.php';
 ?>
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>联系客服 - <?php echo htmlspecialchars($settings['site_name'] ?? '授权查询系统'); ?></title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        body { background-color: #f7fafc; }
-        .nav-link.active { background-color: #ef4444; color: white; }
-        .nav-link { transition: background-color 0.2s ease-in-out; }
-    </style>
-</head>
-<body class="font-sans antialiased">
-
-    <div class="container mx-auto max-w-4xl p-4">
-        <!-- Header Navigation Card -->
-        <header class="bg-white rounded-lg shadow-md p-2 mb-6">
-            <nav class="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-2">
-                <a class="w-full sm:w-auto text-center px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100" href="./query.php">
-                    <i data-lucide="search" class="inline-block w-4 h-4 mr-1"></i>授权查询
-                </a>
-                <a class="w-full sm:w-auto text-center px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100" href="./domain_manager.php">
-                   <i data-lucide="replace" class="inline-block w-4 h-4 mr-1"></i>更换授权
-                </a>
-                 <a class="w-full sm:w-auto text-center px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100" href="./activate.php">
-                    <i data-lucide="user-check" class="inline-block w-4 h-4 mr-1"></i>自助授权
-                </a>
-                <a class="w-full sm:w-auto text-center px-4 py-2 rounded-md text-sm font-medium nav-link active" href="./auth.php">
-                    <i data-lucide="message-circle" class="inline-block w-4 h-4 mr-1"></i>联系客服
-                </a>
-                <a class="w-full sm:w-auto text-center px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100" href="./download.php">
-                    <i data-lucide="download" class="inline-block w-4 h-4 mr-1"></i>下载程序
-                </a>
-            </nav>
-        </header>
-
-        <main>
             <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                 <h2 class="text-xl font-semibold text-gray-800 border-b pb-3 mb-4">联系客服购买授权</h2>
                 
@@ -90,7 +54,7 @@ $wechat_qr_url = htmlspecialchars($settings['wechat_qrcode_url'] ?? '');
                     </div>
 
                     <!-- WeChat Contact -->
-                    <div class="flex flex-col items-center flex-1">
+                    <div class="flex flex-col items-center flex-1 mt-8 md:mt-0">
                          <i data-lucide="scan-line" class="w-16 h-16 text-green-500 mb-4"></i>
                         <h3 class="text-lg font-semibold text-gray-800">扫码添加客服微信</h3>
                         <p class="text-gray-600 my-2">请使用微信扫描下方二维码</p>
@@ -105,9 +69,8 @@ $wechat_qr_url = htmlspecialchars($settings['wechat_qrcode_url'] ?? '');
 
                 </div>
             </div>
+<?php require_once 'footer.php'; ?>
         </main>
-        
-        <?php require_once 'footer.php'; ?>
     </div>
 
     <script>

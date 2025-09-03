@@ -87,53 +87,13 @@ if ($is_post_request) {
         }
     }
 }
+
+$page_title = '程序下载';
+$current_page = 'download.php';
+require_once 'header.php';
 ?>
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>程序下载 - <?php echo htmlspecialchars($settings['site_name'] ?? '授权查询系统'); ?></title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        body { background-color: #f7fafc; }
-        .nav-link.active { background-color: #ef4444; color: white; }
-        .nav-link { transition: background-color 0.2s ease-in-out; }
-        .update-log-content {
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            line-height: 1.6;
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-        }
-    </style>
-</head>
-<body class="font-sans antialiased">
-
-    <div class="container mx-auto max-w-2xl p-4">
-        <!-- Header Navigation Card -->
-        <header class="bg-white rounded-lg shadow-md p-2 mb-6">
-            <nav class="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-2">
-                <a class="w-full sm:w-auto text-center px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100" href="./query.php">
-                    <i data-lucide="search" class="inline-block w-4 h-4 mr-1"></i>授权查询
-                </a>
-                <a class="w-full sm:w-auto text-center px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100" href="./domain_manager.php">
-                   <i data-lucide="replace" class="inline-block w-4 h-4 mr-1"></i>更换授权
-                </a>
-                <a class="w-full sm:w-auto text-center px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100" href="./activate.php">
-                    <i data-lucide="user-check" class="inline-block w-4 h-4 mr-1"></i>自助授权
-                </a>
-                <a class="w-full sm:w-auto text-center px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100" href="./auth.php">
-                    <i data-lucide="message-circle" class="inline-block w-4 h-4 mr-1"></i>联系客服
-                </a>
-                <a class="w-full sm:w-auto text-center px-4 py-2 rounded-md text-sm font-medium nav-link active" href="./download.php">
-                    <i data-lucide="download" class="inline-block w-4 h-4 mr-1"></i>下载程序
-                </a>
-            </nav>
-        </header>
-
         <!-- Download Section -->
-        <main class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
             <div class="text-center">
                 <i data-lucide="cloud-download" class="w-16 h-16 text-blue-500 mx-auto mb-4"></i>
                 <h2 class="text-2xl font-bold text-gray-800">程序下载</h2>
@@ -173,7 +133,7 @@ if ($is_post_request) {
                             </a>
                             <details class="bg-gray-50 p-4 rounded-lg mt-4 border">
                                 <summary class="font-medium cursor-pointer text-gray-800">查看 <?php echo htmlspecialchars($versionText); ?> 更新内容</summary>
-                                <div class="mt-3 pt-3 border-t text-sm text-gray-700 update-log-content">
+                                <div class="mt-3 pt-3 border-t text-sm text-gray-700 whitespace-pre-wrap font-mono">
                                    <?php echo nl2br(htmlspecialchars($result_data['update_log'])); ?>
                                 </div>
                             </details>
@@ -181,9 +141,10 @@ if ($is_post_request) {
                     <?php endif; ?>
                 <?php endif; ?>
             </div>
-        </main>
+        </div>
         
-        <?php require_once 'footer.php'; ?>
+<?php require_once 'footer.php'; ?>
+        </main>
     </div>
 
     <script>
