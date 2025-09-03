@@ -1,6 +1,10 @@
 <?php
 // auth.php (一体化PHP源码)
-
+// 版权所有：小奏 (https://blog.mofuc.cn/)
+// 本软件是小奏独立开发的开源项目，二次开发请务必保留原作者的版权信息。
+// 博客: https://blog.mofuc.cn/
+// B站: https://space.bilibili.com/63216596
+// GitHub: https://github.com/Meguminlove/qingjiu-auth-frontend
 // --- 初始化变量 ---
 $settings = [];
 $qq_number = '尚未设置';
@@ -32,7 +36,7 @@ $wechat_qr_url = htmlspecialchars($settings['wechat_qrcode_url'] ?? '');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>联系授权 - <?php echo htmlspecialchars($settings['site_name'] ?? '授权查询系统'); ?></title>
+    <title>联系客服 - <?php echo htmlspecialchars($settings['site_name'] ?? '授权查询系统'); ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -53,8 +57,11 @@ $wechat_qr_url = htmlspecialchars($settings['wechat_qrcode_url'] ?? '');
                 <a class="w-full sm:w-auto text-center px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100" href="./domain_manager.php">
                    <i data-lucide="replace" class="inline-block w-4 h-4 mr-1"></i>更换授权
                 </a>
+                 <a class="w-full sm:w-auto text-center px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100" href="./activate.php">
+                    <i data-lucide="user-check" class="inline-block w-4 h-4 mr-1"></i>自助授权
+                </a>
                 <a class="w-full sm:w-auto text-center px-4 py-2 rounded-md text-sm font-medium nav-link active" href="./auth.php">
-                    <i data-lucide="key-round" class="inline-block w-4 h-4 mr-1"></i>联系授权
+                    <i data-lucide="message-circle" class="inline-block w-4 h-4 mr-1"></i>联系客服
                 </a>
                 <a class="w-full sm:w-auto text-center px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100" href="./download.php">
                     <i data-lucide="download" class="inline-block w-4 h-4 mr-1"></i>下载程序
@@ -64,7 +71,7 @@ $wechat_qr_url = htmlspecialchars($settings['wechat_qrcode_url'] ?? '');
 
         <main>
             <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-                <h2 class="text-xl font-semibold text-gray-800 border-b pb-3 mb-4">联系客服进行授权</h2>
+                <h2 class="text-xl font-semibold text-gray-800 border-b pb-3 mb-4">联系客服购买授权</h2>
                 
                 <div class="flex flex-col md:flex-row gap-8 items-start justify-center text-center py-8">
                     
@@ -133,4 +140,3 @@ $wechat_qr_url = htmlspecialchars($settings['wechat_qrcode_url'] ?? '');
     </script>
 </body>
 </html>
-

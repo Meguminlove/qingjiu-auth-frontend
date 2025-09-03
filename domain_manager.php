@@ -1,6 +1,10 @@
 <?php
 // domain_manager.php (一体化PHP源码)
-
+// 版权所有：小奏 (https://blog.mofuc.cn/)
+// 本软件是小奏独立开发的开源项目，二次开发请务必保留原作者的版权信息。
+// 博客: https://blog.mofuc.cn/
+// B站: https://space.bilibili.com/63216596
+// GitHub: https://github.com/Meguminlove/qingjiu-auth-frontend
 // --- 初始化变量 ---
 $settings = [];
 $error_message = '';
@@ -144,8 +148,11 @@ if ($is_post_request) {
                 <a class="w-full sm:w-auto text-center px-4 py-2 rounded-md text-sm font-medium nav-link active" href="./domain_manager.php">
                    <i data-lucide="replace" class="inline-block w-4 h-4 mr-1"></i>更换授权
                 </a>
+                <a class="w-full sm:w-auto text-center px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100" href="./activate.php">
+                    <i data-lucide="user-check" class="inline-block w-4 h-4 mr-1"></i>自助授权
+                </a>
                 <a class="w-full sm:w-auto text-center px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100" href="./auth.php">
-                    <i data-lucide="key-round" class="inline-block w-4 h-4 mr-1"></i>联系授权
+                    <i data-lucide="message-circle" class="inline-block w-4 h-4 mr-1"></i>联系客服
                 </a>
                 <a class="w-full sm:w-auto text-center px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100" href="./download.php">
                     <i data-lucide="download" class="inline-block w-4 h-4 mr-1"></i>下载程序
@@ -213,4 +220,3 @@ if ($is_post_request) {
     </script>
 </body>
 </html>
-
