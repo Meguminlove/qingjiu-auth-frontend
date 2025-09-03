@@ -22,22 +22,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = '请输入用户名和密码。';
     } else {
         $conn = get_db_connection();
-        $stmt = $conn->prepare("SELECT id, username, password FROM admins WHERE username = ?");
-        $stmt->bind_param('s', $username);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        
-        if ($result->num_rows === 1) {
-            $admin = $result->fetch_assoc();
-            if (password_verify($password, $admin['password'])) {
-                $_SESSION['admin_id'] = $admin['id'];
-                $_SESSION['admin_username'] = $admin['username'];
-                header('Location: index.php');
-                exit;
+        // [FIX] Added a check to ensure the statement prepared correctly
+        if ($stmt = $conn->prepare("SELECT id, username, password FROM admins WHERE username = ?")) {
+            $stmt->bind_param('s', $username);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            
+            if ($result->num_rows === 1) {
+                $admin = $result->fetch_assoc();
+                if (password_verify($password, $admin['password'])) {
+                    // Password is correct, start session
+                    $_SESSION['admin_id'] = $admin['id'];
+                    $_SESSION['admin_username'] = $admin['username'];
+                    header('Location: index.php');
+                    exit;
+                }
             }
+            // If we get here, either user not found or password incorrect
+            $error = '用户名或密码不正确。';
+            $stmt->close();
+        } else {
+            // This error will trigger if there's a problem with the SQL query itself
+            $error = '登录时发生数据库错误，请联系管理员。';
+            error_log("Login statement prepare failed: " . $conn->error);
         }
-        $error = '用户名或密码不正确。';
-        $stmt->close();
         $conn->close();
     }
 }
@@ -99,4 +107,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </script>
 </body>
 </html>
-

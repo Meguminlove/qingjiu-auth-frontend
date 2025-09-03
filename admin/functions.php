@@ -13,6 +13,7 @@ if (session_status() == PHP_SESSION_NONE) {
 // --- 数据库连接 ---
 function get_db_connection() {
     if (!file_exists(__DIR__ . '/../config.php')) {
+        // Redirect to installation if config file is missing
         header('Location: ../install.php');
         exit;
     }
@@ -20,13 +21,15 @@ function get_db_connection() {
     
     $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
     if ($conn->connect_error) {
-        die("数据库连接失败: " . $conn->connect_error);
+        // Use a user-friendly error page instead of die()
+        error_log("Database connection failed: " . $conn->connect_error);
+        die("数据库连接失败，请检查配置文件或联系管理员。");
     }
     $conn->set_charset('utf8mb4');
     return $conn;
 }
 
-// --- 安全函数 ---
+// --- 安全与会话 ---
 function is_logged_in() {
     return isset($_SESSION['admin_id']);
 }
@@ -42,7 +45,6 @@ function escape_html($string) {
     return htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
 }
 
-
 // --- 设置管理 ---
 function get_all_settings() {
     $conn = get_db_connection();
@@ -57,21 +59,24 @@ function get_all_settings() {
     return $settings;
 }
 
-function update_settings($settings_data) {
+function update_settings($settings_array) {
     $conn = get_db_connection();
-    $stmt = $conn->prepare("UPDATE settings SET setting_value = ? WHERE setting_key = ?");
-    
-    foreach ($settings_data as $key => $value) {
-        $stmt->bind_param('ss', $value, $key);
+    $stmt = $conn->prepare("REPLACE INTO settings (setting_key, setting_value) VALUES (?, ?)");
+    if (!$stmt) {
+        $conn->close();
+        return false;
+    }
+    foreach ($settings_array as $key => $value) {
+        $stmt->bind_param("ss", $key, $value);
         $stmt->execute();
     }
-    
     $stmt->close();
     $conn->close();
     return true;
 }
 
-// --- [美化更新] 页面模板 ---
+
+// --- 页面渲染 ---
 function render_header($title) {
     $admin_username = escape_html($_SESSION['admin_username'] ?? 'Admin');
     echo <<<HTML
@@ -79,45 +84,43 @@ function render_header($title) {
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{$title} - 授权后台管理系统</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         .sidebar-link.active {
-            background-color: #f3f4f6;
-            color: #1f2937;
-            font-weight: 600;
+            background-color: #3b82f6; /* bg-blue-600 */
+            color: white;
         }
-        .sidebar-link:hover {
-             background-color: #f9fafb;
+        .sidebar-link.active i {
+            color: white;
         }
     </style>
 </head>
-<body class="bg-gray-50 font-sans">
+<body class="bg-gray-100">
     <div class="flex h-screen">
         <!-- Sidebar -->
-        <div class="w-60 bg-white border-r border-gray-200 flex flex-col">
-            <div class="px-6 py-4 border-b border-gray-200">
-                <a href="index.php" class="flex items-center space-x-2">
-                    <i data-lucide="shield-check" class="text-blue-600 h-7 w-7"></i>
-                    <h1 class="text-lg font-bold text-gray-800">授权管理系统</h1>
-                </a>
+        <aside class="w-64 bg-white shadow-md flex-shrink-0">
+            <div class="p-6">
+                <h1 class="text-2xl font-bold text-blue-600">授权后台</h1>
             </div>
-            <nav class="flex-1 mt-4 px-4">
+            <nav class="mt-6">
+                <div class="px-6 py-2">
 HTML;
     render_nav_link('index.php', 'layout-dashboard', '工作台');
     render_nav_link('settings_site.php', 'settings', '网站设置');
     render_nav_link('settings_api.php', 'key-round', 'API设置');
-    render_nav_link('settings_version.php', 'git-branch-plus', '程序版本设置');
+    render_nav_link('settings_version.php', 'git-branch-plus', '版本设置');
+    render_nav_link('settings_smtp.php', 'mail', '邮箱设置');
     echo <<<HTML
+                </div>
             </nav>
-        </div>
+        </aside>
+
         <!-- Main Content -->
-        <div class="flex-1 flex flex-col">
-            <!-- Topbar -->
-            <header class="bg-white border-b border-gray-200">
-                <div class="flex items-center justify-between px-6 h-16">
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <header class="bg-white shadow-sm z-10">
+               <div class="flex items-center justify-between px-6 h-16">
                     <div>
                          <h2 class="text-xl font-semibold text-gray-700">{$title}</h2>
                     </div>
@@ -153,11 +156,10 @@ function render_nav_link($href, $icon, $text) {
     $current_page = basename($_SERVER['PHP_SELF']);
     $active_class = ($current_page == $href) ? 'active' : '';
     echo <<<HTML
-    <a href="{$href}" class="sidebar-link flex items-center px-4 py-2.5 text-sm text-gray-600 rounded-lg transition-colors duration-200 {$active_class}">
-        <i data-lucide="{$icon}" class="w-5 h-5"></i>
-        <span class="ml-3">{$text}</span>
+    <a href="{$href}" class="sidebar-link flex items-center px-4 py-2.5 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors {$active_class}">
+        <i data-lucide="{$icon}" class="w-5 h-5 mr-3 text-gray-500"></i>
+        <span>{$text}</span>
     </a>
 HTML;
 }
-?>
 

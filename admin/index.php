@@ -87,7 +87,7 @@ render_header('工作台');
 
 <div class="mt-8 bg-white p-6 rounded-lg shadow-md">
     <h3 class="text-lg font-semibold text-gray-800 border-b pb-3 mb-4">常用操作</h3>
-    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 text-center">
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 text-center">
         <a href="settings_site.php" class="block bg-gray-50 hover:bg-gray-100 p-4 rounded-lg transition-colors">
             <i data-lucide="settings" class="w-8 h-8 mx-auto text-gray-600"></i>
             <p class="mt-2 text-sm font-medium text-gray-700">网站设置</p>
@@ -95,6 +95,10 @@ render_header('工作台');
         <a href="settings_api.php" class="block bg-gray-50 hover:bg-gray-100 p-4 rounded-lg transition-colors">
             <i data-lucide="key-round" class="w-8 h-8 mx-auto text-gray-600"></i>
             <p class="mt-2 text-sm font-medium text-gray-700">API设置</p>
+        </a>
+        <a href="settings_smtp.php" class="block bg-gray-50 hover:bg-gray-100 p-4 rounded-lg transition-colors">
+            <i data-lucide="mail" class="w-8 h-8 mx-auto text-gray-600"></i>
+            <p class="mt-2 text-sm font-medium text-gray-700">邮箱设置</p>
         </a>
         <a href="settings_version.php" class="block bg-gray-50 hover:bg-gray-100 p-4 rounded-lg transition-colors">
             <i data-lucide="git-branch-plus" class="w-8 h-8 mx-auto text-gray-600"></i>
@@ -107,4 +111,3 @@ render_header('工作台');
 <?php
 render_footer();
 ?>
-
