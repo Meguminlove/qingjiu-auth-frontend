@@ -1,5 +1,10 @@
 <?php
 // admin/settings_api.php
+// 版权所有：小奏 (https://blog.mofuc.cn/)
+// 本软件是小奏独立开发的开源项目，二次开发请务必保留原作者的版权信息。
+// 博客: https://blog.mofuc.cn/
+// B站: https://space.bilibili.com/63216596
+// GitHub: https://github.com/Meguminlove/qingjiu-auth-frontend
 require_once 'functions.php';
 require_login();
 
@@ -79,7 +84,7 @@ render_header('API设置');
             <div class="border-t pt-8">
                  <label for="customer_service_qq" class="block text-sm font-medium text-gray-700">客服QQ</label>
                 <input type="text" id="customer_service_qq" name="customer_service_qq" value="<?php echo escape_html($settings['customer_service_qq'] ?? ''); ?>" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
-                <p class="mt-2 text-xs text-gray-500">将显示在“联系授权”页面的客服QQ号。</p>
+                <p class="mt-2 text-xs text-gray-500">将显示在“联系客服”页面的客服QQ号。</p>
             </div>
 
             <div>
@@ -97,7 +102,7 @@ render_header('API设置');
                         <input type="file" id="wechat_qrcode" name="wechat_qrcode" onchange="document.getElementById('qrcode_preview').src = window.URL.createObjectURL(this.files[0])" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"/>
                     </label>
                 </div>
-                <p class="mt-2 text-xs text-gray-500">上传新的二维码图片将会覆盖旧的。将显示在“联系授权”页面。</p>
+                <p class="mt-2 text-xs text-gray-500">上传新的二维码图片将会覆盖旧的。将显示在“联系客服”页面。</p>
             </div>
         </div>
 
