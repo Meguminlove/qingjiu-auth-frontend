@@ -1,10 +1,11 @@
 <?php
-// query.php (重构版)
+// index.php (全新主页)
 // 版权所有：小奏 (https://blog.mofuc.cn/)
 // 本软件是小奏独立开发的开源项目，二次开发请务必保留原作者的版权信息。
 // 博客: https://blog.mofuc.cn/
 // B站: https://space.bilibili.com/63216596
 // GitHub: https://github.com/Meguminlove/qingjiu-auth-frontend
+
 require_once 'bootstrap.php';
 
 // --- 初始化变量 ---
@@ -12,6 +13,7 @@ $result_data = null;
 $result_message = '';
 $result_color = 'yellow';
 $is_post_request = ($_SERVER['REQUEST_METHOD'] === 'POST');
+$error_message = '';
 
 // --- 表单提交处理 ---
 if ($is_post_request) {
@@ -47,7 +49,7 @@ if ($is_post_request) {
             curl_close($ch);
 
             if ($response_body === false) {
-                $error_message = '查询请求失败: ' . $curl_error;
+                $error_message = '查询请求失败: ' . htmlspecialchars($curl_error);
             } else {
                 $data = json_decode($response_body, true);
                 if (isset($data['code'])) {
@@ -80,35 +82,47 @@ if ($is_post_request) {
 if(isset($conn)) $conn->close();
 
 $announcement = !empty($settings['system_announcement']) ? htmlspecialchars($settings['system_announcement']) : '暂无最新公告。';
-$page_title = '授权查询';
-$current_page = 'query.php';
+$page_title = '首页';
+$current_page = 'index.php'; // 为了导航栏高亮
 require_once 'header.php';
 ?>
-            <!-- Authorization Query Form Card -->
-            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-                <h2 class="text-xl font-semibold text-gray-800 border-b pb-3 mb-4">授权查询</h2>
-                <form id="query-form" action="query.php" method="POST" class="space-y-4">
+            <!-- 公告区域 -->
+            <div class="bg-blue-50 border-l-4 border-blue-500 text-blue-800 p-4 rounded-lg mb-6" role="alert">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <i data-lucide="megaphone" class="h-5 w-5"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm"><?php echo nl2br($announcement); ?></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 核心查询区域 -->
+            <div class="bg-white rounded-lg shadow-md p-6 sm:p-8 mb-6">
+                <h2 class="text-xl sm:text-2xl font-bold text-center text-gray-800 mb-6">授权查询</h2>
+                <form id="query-form" action="index.php" method="POST" class="space-y-4 max-w-lg mx-auto">
                     <div>
-                        <label for="query-type" class="block text-sm font-medium text-gray-700">查询类型:</label>
+                        <label for="query-type" class="block text-sm font-medium text-gray-700">查询类型</label>
                         <select id="query-type" name="query_type" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                             <option value="domain" selected>授权域名</option>
                             <option value="license_key">授权密钥</option>
                         </select>
                     </div>
                     <div>
-                        <label for="query-info" class="block text-sm font-medium text-gray-700">查询信息:</label>
-                        <input type="text" id="query-info" name="query_info" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="请输入查询信息" required>
+                        <label for="query-info" class="block text-sm font-medium text-gray-700">查询信息</label>
+                        <input type="text" id="query-info" name="query_info" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="请输入要查询的授权域名" required>
                     </div>
-                    
                     <div class="pt-2">
-                        <button type="submit" id="submit-button" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
-                            <i data-lucide="check-circle" class="w-5 h-5 mr-2"></i>立即查询
+                        <button type="submit" class="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
+                            <i data-lucide="search" class="w-5 h-5 mr-2"></i>立即查询
                         </button>
                     </div>
                 </form>
             </div>
             
-            <div id="results-container" class="mb-6" aria-live="polite">
+            <!-- 查询结果显示区域 -->
+            <div id="results-container" class="mb-6 max-w-lg mx-auto" aria-live="polite">
                 <?php if ($is_post_request): ?>
                     <?php if (!empty($error_message)): ?>
                         <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md" role="alert">
@@ -136,9 +150,34 @@ require_once 'header.php';
                 <?php endif; ?>
             </div>
 
-            <div class="bg-white rounded-lg shadow-md p-6">
-                 <h2 class="text-xl font-semibold text-gray-800 border-b pb-3 mb-4">系统公告</h2>
-                 <p id="announcement-content" class="text-gray-600"><?php echo nl2br($announcement); ?></p>
+            <!-- 功能导航卡片 -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <?php
+                    // 定义卡片数据
+                    $cards = [
+                        ['href' => 'activate.php', 'icon' => 'user-check', 'title' => '自助授权', 'desc' => '使用卡密激活您的产品授权。', 'color' => 'blue'],
+                        ['href' => 'domain_manager.php', 'icon' => 'replace', 'title' => '更换授权', 'desc' => '更换您已授权产品的域名。', 'color' => 'indigo'],
+                        ['href' => 'key_query.php', 'icon' => 'key-round', 'title' => '密钥找回', 'desc' => '通过邮箱找回您的授权密钥。', 'color' => 'purple'],
+                        ['href' => 'download.php', 'icon' => 'download', 'title' => '程序下载', 'desc' => '验证卡密后下载最新版程序。', 'color' => 'green'],
+                        ['href' => 'auth.php', 'icon' => 'message-circle', 'title' => '联系客服', 'desc' => '获取帮助或进行人工业务。', 'color' => 'sky'],
+                        ['href' => '#', 'icon' => 'log-in', 'title' => '用户登录', 'desc' => '登录以管理您的授权与服务。', 'color' => 'slate'],
+                    ];
+
+                    foreach ($cards as $card) {
+                        $attributes = $card['title'] === '用户登录' ? 'onclick="alert(\'此功能正在开发中，敬请期待！\'); return false;"' : '';
+                        echo <<<HTML
+                        <a href="{$card['href']}" {$attributes} class="group block bg-white rounded-lg shadow-md p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                            <div class="flex items-center">
+                                <div class="p-3 rounded-full bg-{$card['color']}-100 text-{$card['color']}-600">
+                                    <i data-lucide="{$card['icon']}" class="w-6 h-6"></i>
+                                </div>
+                                <h3 class="ml-4 text-lg font-semibold text-gray-800">{$card['title']}</h3>
+                            </div>
+                            <p class="mt-3 text-sm text-gray-600">{$card['desc']}</p>
+                        </a>
+HTML;
+                    }
+                ?>
             </div>
         
 <?php require_once 'footer.php'; ?>
@@ -159,3 +198,4 @@ require_once 'header.php';
     </script>
 </body>
 </html>
+

@@ -6,7 +6,7 @@
 // B站: https://space.bilibili.com/63216596
 // GitHub: https://github.com/Meguminlove/qingjiu-auth-frontend
 
-// 函数：渲染导航链接
+// 函数：渲染顶部导航链接 (PC端)
 function render_nav_link($href, $icon, $text, $current_page) {
     $active_class = ($current_page === $href) ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-gray-100';
     echo <<<HTML
@@ -15,6 +15,18 @@ function render_nav_link($href, $icon, $text, $current_page) {
     </a>
 HTML;
 }
+
+// 函数：渲染底部导航链接 (移动端)
+function render_bottom_nav_link($href, $icon, $text, $current_page) {
+    $active_class = ($current_page === $href) ? 'text-blue-600' : 'text-gray-500';
+    echo <<<HTML
+    <a href="./{$href}" class="flex flex-col items-center justify-center flex-1 pt-2 pb-1 text-center transition-colors duration-200 {$active_class} hover:text-blue-500">
+        <i data-lucide="{$icon}" class="w-6 h-6 mb-1"></i>
+        <span class="text-xs tracking-tight">{$text}</span>
+    </a>
+HTML;
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -32,21 +44,24 @@ HTML;
 </head>
 <body class="font-sans antialiased">
     <div class="container mx-auto max-w-4xl p-4">
-        <header class="bg-white rounded-lg shadow-md p-2 mb-6">
+        <!-- 顶部导航栏在手机端隐藏 -->
+        <header class="bg-white rounded-lg shadow-md p-2 mb-6 hidden md:block">
             <nav class="flex flex-wrap items-center justify-center gap-2">
                 <?php
-                // 确定当前页面的文件名，用于设置导航栏高亮
                 $current_page = basename($_SERVER['PHP_SELF']);
                 
+                // [新增] 首页选项
+                render_nav_link('index.php', 'home', '首页', $current_page);
                 render_nav_link('query.php', 'search', '授权查询', $current_page);
                 render_nav_link('domain_manager.php', 'replace', '更换授权', $current_page);
                 render_nav_link('activate.php', 'user-check', '自助授权', $current_page);
                 render_nav_link('key_query.php', 'key-round', '密钥查询', $current_page);
                 render_nav_link('auth.php', 'message-circle', '联系客服', $current_page);
-                render_nav_link('download.php', 'download', '下载程序', $current_page);
+                render_nav_link('download.php', 'download', '程序下载', $current_page);
                 ?>
             </nav>
         </header>
 
-        <main>
+        <!-- 为主内容区域在手机端增加底部内边距，防止被导航栏遮挡 -->
+        <main class="pb-20 md:pb-0">
 

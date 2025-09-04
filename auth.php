@@ -1,5 +1,5 @@
 <?php
-// auth.php (一体化PHP源码)
+// auth.php 
 // 版权所有：小奏 (https://blog.mofuc.cn/)
 // 本软件是小奏独立开发的开源项目，二次开发请务必保留原作者的版权信息。
 // 博客: https://blog.mofuc.cn/
@@ -37,14 +37,16 @@ require_once 'header.php';
             <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                 <h2 class="text-xl font-semibold text-gray-800 border-b pb-3 mb-4">联系客服购买授权</h2>
                 
-                <div class="flex flex-col md:flex-row gap-8 items-start justify-center text-center py-8">
+                <!-- [UI FIX] Changed to items-center for mobile centering -->
+                <div class="flex flex-col md:flex-row gap-8 md:items-start items-center justify-center text-center py-8">
                     
                     <!-- QQ Contact -->
                     <div class="flex flex-col items-center flex-1">
                         <i data-lucide="message-circle" class="w-16 h-16 text-blue-500 mb-4"></i>
                         <h3 class="text-lg font-semibold text-gray-800">联系客服QQ</h3>
                         <p class="text-gray-600 my-2">请添加下方QQ号进行授权咨询</p>
-                        <div class="bg-gray-100 font-mono text-lg px-4 py-2 rounded-md">
+                        <!-- [UI FIX] Added break-all to prevent overflow -->
+                        <div class="bg-gray-100 font-mono text-lg px-4 py-2 rounded-md break-all">
                            <?php echo $qq_number; ?>
                         </div>
                         <button id="copy-qq" class="mt-4 flex items-center justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
@@ -103,3 +105,4 @@ require_once 'header.php';
     </script>
 </body>
 </html>
+
