@@ -1,1 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+    body { margin: 0; padding: 0; background-color: #f4f7f6; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; }
+    .container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+    .header { background-color: #007bff; color: #ffffff; padding: 40px; text-align: center; }
+    .header-icon { width: 50px; height: 50px; margin: 0 auto 20px; background-color: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+    .header h1 { margin: 0; font-size: 24px; font-weight: 600; }
+    .content { padding: 30px; color: #555; line-height: 1.6; }
+    .content h2 { color: #333; font-size: 20px; margin-top: 0; }
+    .content p { margin: 0 0 15px; }
+    .details-box { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 6px; padding: 20px; margin: 20px 0; }
+    .detail-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #e9ecef; }
+    .detail-item:last-child { border-bottom: none; }
+    .detail-item span:first-child { color: #888; }
+    .license-key { background-color: #e9ecef; padding: 5px 10px; border-radius: 4px; font-family: "Courier New", Courier, monospace; font-weight: bold; color: #333; }
+    .footer-note { background-color: #eef7ff; border-left: 4px solid #007bff; padding: 15px; color: #31708f; font-size: 14px; margin-top: 20px; border-radius: 0 4px 4px 0; }
+    .footer { padding: 20px; text-align: center; font-size: 12px; color: #aaa; }
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="header-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-key"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+        </div>
+        <h1>{{site_name}}</h1>
+    </div>
+    <div class="content">
+        <h2>尊敬的用户，您好！</h2>
+        <p>恭喜您！您已成功激活产品卡密，现在可以开始使用相关功能了。</p>
+        
+        <div class="details-box">
+            <h3 style="margin-top:0; color:#333;">激活详情</h3>
+            <div class="detail-item">
+                <span>产品名称:</span>
+                <span>{{product_name}}</span>
+            </div>
+            <div class="detail-item">
+                <span>卡密类型:</span>
+                <span>{{card_type}}</span>
+            </div>
+            <div class="detail-item">
+                <span>许可证密钥:</span>
+                <span class="license-key">{{license_key}}</span>
+            </div>
+            <div class="detail-item">
+                <span>激活时间:</span>
+                <span>{{activation_time}}</span>
+            </div>
+            <div class="detail-item">
+                <span>有效期:</span>
+                <span>{{expiry_time}}</span>
+            </div>
+        </div>
 
+        <div class="footer-note">
+            <strong>重要提醒:</strong> 请妥善保管您的许可证密钥，在使用产品时可能需要用到。建议您将密钥保存在安全的地方。
+        </div>
+    </div>
+    <div class="footer">
+        © <?php echo date('Y'); ?> {{site_name}}. All Rights Reserved.
+    </div>
+</div>
+</body>
+</html>
