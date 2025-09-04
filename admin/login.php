@@ -13,8 +13,14 @@ if (is_logged_in()) {
 }
 
 $error = '';
+$max_login_attempts = 5;
+$lockout_time = 15 * 60; // 15 分钟
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+// [安全增强] 检查是否已因多次失败而被锁定
+if (isset($_SESSION['login_attempts']) && $_SESSION['login_attempts'] >= $max_login_attempts && isset($_SESSION['lockout_until']) && time() < $_SESSION['lockout_until']) {
+    $remaining_time = ceil(($_SESSION['lockout_until'] - time()) / 60);
+    $error = "登录尝试次数过多，请在 {$remaining_time} 分钟后重试。";
+} elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'] ?? '';
     $password = $_POST['password'] ?? '';
 
@@ -22,7 +28,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = '请输入用户名和密码。';
     } else {
         $conn = get_db_connection();
-        // [FIX] Added a check to ensure the statement prepared correctly
         if ($stmt = $conn->prepare("SELECT id, username, password FROM admins WHERE username = ?")) {
             $stmt->bind_param('s', $username);
             $stmt->execute();
@@ -31,18 +36,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($result->num_rows === 1) {
                 $admin = $result->fetch_assoc();
                 if (password_verify($password, $admin['password'])) {
-                    // Password is correct, start session
+                    // 登录成功
+                    unset($_SESSION['login_attempts'], $_SESSION['lockout_until']);
+                    session_regenerate_id(true); // [安全增强] 防止会话固定攻击
                     $_SESSION['admin_id'] = $admin['id'];
                     $_SESSION['admin_username'] = $admin['username'];
                     header('Location: index.php');
                     exit;
                 }
             }
-            // If we get here, either user not found or password incorrect
-            $error = '用户名或密码不正确。';
+            
+            // 登录失败处理
+            if (!isset($_SESSION['login_attempts'])) {
+                $_SESSION['login_attempts'] = 0;
+            }
+            $_SESSION['login_attempts']++;
+
+            if ($_SESSION['login_attempts'] >= $max_login_attempts) {
+                $_SESSION['lockout_until'] = time() + $lockout_time;
+                $error = '登录尝试次数过多，您的账户已被锁定15分钟。';
+            } else {
+                 $error = '用户名或密码不正确。';
+            }
+
             $stmt->close();
         } else {
-            // This error will trigger if there's a problem with the SQL query itself
             $error = '登录时发生数据库错误，请联系管理员。';
             error_log("Login statement prepare failed: " . $conn->error);
         }
@@ -54,11 +72,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>管理员登录 - 授权后台管理系统</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
     <div class="w-full max-w-sm">
         <div class="bg-white rounded-2xl shadow-xl p-8">
             <div class="flex flex-col items-center mb-6">
@@ -95,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                 </div>
                 <div>
-                    <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" <?php if (isset($_SESSION['lockout_until']) && time() < $_SESSION['lockout_until']) echo 'disabled'; ?>>
                         安全登录
                     </button>
                 </div>
@@ -107,3 +126,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </script>
 </body>
 </html>
+
