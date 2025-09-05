@@ -8,9 +8,11 @@
 
 // 函数：渲染顶部导航链接 (PC端)
 function render_nav_link($href, $icon, $text, $current_page) {
+    // 确保所有链接都指向根目录（添加根目录前缀）
+    $root_href = "/" . ltrim($href, '/');
     $active_class = ($current_page === $href) ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-gray-100';
     echo <<<HTML
-    <a class="w-full sm:w-auto text-center px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 {$active_class}" href="./{$href}">
+    <a class="w-full sm:w-auto text-center px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 {$active_class}" href="{$root_href}">
         <i data-lucide="{$icon}" class="inline-block w-4 h-4 mr-1"></i>{$text}
     </a>
 HTML;
@@ -18,9 +20,11 @@ HTML;
 
 // 函数：渲染底部导航链接 (移动端)
 function render_bottom_nav_link($href, $icon, $text, $current_page) {
+    // 确保所有链接都指向根目录（添加根目录前缀）
+    $root_href = "/" . ltrim($href, '/');
     $active_class = ($current_page === $href) ? 'text-blue-600' : 'text-gray-500';
     echo <<<HTML
-    <a href="./{$href}" class="flex flex-col items-center justify-center flex-1 pt-2 pb-1 text-center transition-colors duration-200 {$active_class} hover:text-blue-500">
+    <a href="{$root_href}" class="flex flex-col items-center justify-center flex-1 pt-2 pb-1 text-center transition-colors duration-200 {$active_class} hover:text-blue-500">
         <i data-lucide="{$icon}" class="w-6 h-6 mb-1"></i>
         <span class="text-xs tracking-tight">{$text}</span>
     </a>
@@ -50,7 +54,7 @@ HTML;
                 <?php
                 $current_page = basename($_SERVER['PHP_SELF']);
                 
-                // [新增] 首页选项
+                // [新增] 首页选项 - 所有链接现在都指向根目录
                 render_nav_link('index.php', 'home', '首页', $current_page);
                 render_nav_link('query.php', 'search', '授权查询', $current_page);
                 render_nav_link('domain_manager.php', 'replace', '更换授权', $current_page);
@@ -64,4 +68,3 @@ HTML;
 
         <!-- 为主内容区域在手机端增加底部内边距，防止被导航栏遮挡 -->
         <main class="pb-20 md:pb-0">
-

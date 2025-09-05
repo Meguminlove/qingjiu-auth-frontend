@@ -15,6 +15,10 @@ $result_color = 'yellow';
 $is_post_request = ($_SERVER['REQUEST_METHOD'] === 'POST');
 $error_message = '';
 
+// --- [新增] 检查用户登录状态 ---
+$is_user_logged_in = isset($_SESSION['user_token']) && !empty($_SESSION['user_token']);
+
+
 // --- 表单提交处理 ---
 if ($is_post_request) {
     if (!$is_installed) {
@@ -160,13 +164,21 @@ require_once 'header.php';
                         ['href' => 'key_query.php', 'icon' => 'key-round', 'title' => '密钥找回', 'desc' => '通过邮箱找回您的授权密钥。', 'color' => 'purple'],
                         ['href' => 'download.php', 'icon' => 'download', 'title' => '程序下载', 'desc' => '验证卡密后下载最新版程序。', 'color' => 'green'],
                         ['href' => 'auth.php', 'icon' => 'message-circle', 'title' => '联系客服', 'desc' => '获取帮助或进行人工业务。', 'color' => 'sky'],
-                        ['href' => '#', 'icon' => 'log-in', 'title' => '用户登录', 'desc' => '登录以管理您的授权与服务。', 'color' => 'slate'],
                     ];
 
+                    // --- [MODIFIED] 动态生成用户中心/登录卡片 ---
+                    if ($is_user_logged_in) {
+                        $user_card = ['href' => 'user/index.php', 'icon' => 'layout-dashboard', 'title' => '用户中心', 'desc' => '管理您的授权与服务。', 'color' => 'slate'];
+                    } else {
+                        $user_card = ['href' => 'user/login.php', 'icon' => 'log-in', 'title' => '用户登录', 'desc' => '登录以管理您的授权与服务。', 'color' => 'slate'];
+                    }
+                    $cards[] = $user_card;
+
+
                     foreach ($cards as $card) {
-                        $attributes = $card['title'] === '用户登录' ? 'onclick="alert(\'此功能正在开发中，敬请期待！\'); return false;"' : '';
+                        // [REMOVED] 移除了旧的onclick提示
                         echo <<<HTML
-                        <a href="{$card['href']}" {$attributes} class="group block bg-white rounded-lg shadow-md p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                        <a href="{$card['href']}" class="group block bg-white rounded-lg shadow-md p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
                             <div class="flex items-center">
                                 <div class="p-3 rounded-full bg-{$card['color']}-100 text-{$card['color']}-600">
                                     <i data-lucide="{$card['icon']}" class="w-6 h-6"></i>
@@ -198,4 +210,3 @@ HTML;
     </script>
 </body>
 </html>
-

@@ -47,6 +47,12 @@ if ($step === 3 && $_SERVER['REQUEST_METHOD'] === 'POST') {
                 $sql_settings = "CREATE TABLE IF NOT EXISTS `settings` (`setting_key` varchar(50) NOT NULL, `setting_value` text, PRIMARY KEY (`setting_key`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
                 $sql_local_auths = "CREATE TABLE IF NOT EXISTS `local_authorizations` (`id` int(11) NOT NULL AUTO_INCREMENT, `product_id` int(11) NOT NULL, `auth_domain` varchar(255) NOT NULL, `auth_email` varchar(255) NOT NULL, `license_key` varchar(255) NOT NULL, `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (`id`), UNIQUE KEY `uniq_auth` (`product_id`,`auth_domain`,`auth_email`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
                 
+                // --- 新增：用户中心相关数据表 ---
+                $sql_users = "CREATE TABLE IF NOT EXISTS `users` ( `id` int(11) NOT NULL AUTO_INCREMENT, `email` varchar(255) NOT NULL, `password` varchar(255) NOT NULL, `nickname` varchar(50) NOT NULL, `role` int(11) DEFAULT 0, `api_key` varchar(255) DEFAULT NULL, `last_login_time` datetime DEFAULT NULL, `last_login_ip` varchar(45) DEFAULT NULL, `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (`id`), UNIQUE KEY `email` (`email`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
+                $sql_transactions = "CREATE TABLE IF NOT EXISTS `transactions` ( `id` int(11) NOT NULL AUTO_INCREMENT, `order_id` varchar(255) NOT NULL, `user_id` int(11) NOT NULL, `product_id` int(11) DEFAULT NULL, `type` int(11) NOT NULL, `amount` decimal(10,2) NOT NULL, `description` varchar(255) DEFAULT NULL, `payment_method` varchar(50) DEFAULT NULL, `status` int(11) NOT NULL, `payment_gateway_trade_no` varchar(255) DEFAULT NULL, `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, `paid_at` datetime DEFAULT NULL, PRIMARY KEY (`id`), KEY `user_id` (`user_id`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
+                $sql_cards = "CREATE TABLE IF NOT EXISTS `cards` ( `id` int(11) NOT NULL AUTO_INCREMENT, `card_key` varchar(255) NOT NULL, `product_id` int(11) NOT NULL, `card_type` int(11) NOT NULL, `status` int(11) NOT NULL DEFAULT 0, `owner_id` int(11) DEFAULT NULL, `activator_email` varchar(255) DEFAULT NULL, `activate_time` datetime DEFAULT NULL, `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (`id`), UNIQUE KEY `card_key` (`card_key`), KEY `owner_id` (`owner_id`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
+                $sql_permissions = "CREATE TABLE IF NOT EXISTS `user_product_permissions` ( `id` int(11) NOT NULL AUTO_INCREMENT, `user_id` int(11) NOT NULL, `product_id` int(11) NOT NULL, `permission_level` int(11) NOT NULL, `expire_time` datetime DEFAULT NULL, `status` int(11) NOT NULL DEFAULT 1, `is_lifetime` tinyint(1) NOT NULL DEFAULT 0, `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, PRIMARY KEY (`id`), UNIQUE KEY `user_product` (`user_id`,`product_id`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
+
                 $updates_dir = __DIR__ . '/updates';
                 if (!is_dir($updates_dir)) {
                     if (!mkdir($updates_dir, 0755, true)) {
@@ -66,7 +72,7 @@ if ($step === 3 && $_SERVER['REQUEST_METHOD'] === 'POST') {
                 @file_put_contents($updates_dir . '/index.html', '');
 
 
-                if (!$error && $conn->query($sql_admins) && $conn->query($sql_settings) && $conn->query($sql_local_auths)) {
+                if (!$error && $conn->query($sql_admins) && $conn->query($sql_settings) && $conn->query($sql_local_auths) && $conn->query($sql_users) && $conn->query($sql_transactions) && $conn->query($sql_cards) && $conn->query($sql_permissions)) {
                     $hashed_password = password_hash($admin_pass, PASSWORD_DEFAULT);
                     $stmt_admin = $conn->prepare("REPLACE INTO `admins` (username, password) VALUES (?, ?)");
                     $stmt_admin->bind_param("ss", $admin_user, $hashed_password);
@@ -74,7 +80,7 @@ if ($step === 3 && $_SERVER['REQUEST_METHOD'] === 'POST') {
                     $stmt_admin->close();
                     
                     $default_settings = [
-                        'site_name' => '小奏授权查询系统', 'site_keywords' => '授权查询, 源码授权', 'site_description' => '一个轻量、高效的授权查询系统', 'site_icp' => '', 'site_footer' => '© ' . date('Y') . ' 小奏授权查询系统. All Rights Reserved.', 'api_url' => 'https://www.79tian.com/api/v1', 'api_key' => '', 'wechat_qrcode_url' => '', 'customer_service_qq' => '', 'download_url' => '', 'update_version' => 'v1.0.0', 'update_log' => '初始版本发布。', 'system_announcement' => '欢迎使用本系统！', 'query_product_id' => '1', 'smtp_auth_method' => 'smtp', 'smtp_host' => '', 'smtp_port' => '465', 'smtp_secure' => 'ssl', 'pop3_host' => '', 'pop3_port' => '110', 'smtp_user' => '', 'smtp_pass' => '', 'smtp_from_email' => '', 'smtp_from_name' => '授权系统', 'db_version' => '1' 
+                        'site_name' => '小奏授权查询系统', 'site_keywords' => '软件授权管理,正版软件认证,授权查询系统,授权管理系统,软件许可服务,企业级授权解决方案,API授权验证,密钥管理系统,晴玖授权站,晴玖授权对接', 'site_description' => '晴玖授权查询系统是由小奏独立开发的轻量级专业授权管理平台。该系统通过标准API接口和密钥加密机制，无缝对接晴玖授权站核心服务，提供安全可靠的授权验证、密钥管理和状态查询功能，助力企业和开发者实现高效的正版软件授权管理。', 'site_icp' => '', 'site_footer' => '© ' . date('Y') . ' 小奏授权查询系统. All Rights Reserved.', 'api_url' => 'https://www.79tian.com/api/v1', 'api_key' => '', 'wechat_qrcode_url' => '', 'customer_service_qq' => '', 'download_url' => '', 'update_version' => 'v1.0.0', 'update_log' => '初始版本发布。', 'system_announcement' => '欢迎使用本系统！', 'query_product_id' => '1', 'smtp_auth_method' => 'smtp', 'smtp_host' => '', 'smtp_port' => '465', 'smtp_secure' => 'ssl', 'pop3_host' => '', 'pop3_port' => '110', 'smtp_user' => '', 'smtp_pass' => '', 'smtp_from_email' => '', 'smtp_from_name' => '授权系统', 'db_version' => '3' 
                     ];
                     
                     $stmt_settings = $conn->prepare("REPLACE INTO `settings` (setting_key, setting_value) VALUES (?, ?)");
