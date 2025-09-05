@@ -44,7 +44,6 @@ function escape_html($string) {
     return htmlspecialchars((string)$string, ENT_QUOTES, 'UTF-8');
 }
 
-
 // --- 设置管理 ---
 function get_all_settings() {
     $conn = get_db_connection();
@@ -74,7 +73,6 @@ function update_settings($settings_array) {
     $conn->close();
     return true;
 }
-
 
 // --- 页面渲染 ---
 function render_header($title) {
@@ -131,7 +129,7 @@ HTML;
                  <div class="flex-shrink-0 p-4 border-t">
                     <div class="flex items-center">
                         <div>
-                            <img class="inline-block h-10 w-10 rounded-full" src="https://blog.mofuc.cn/wp-content/uploads/2024/04/2024042805404112-scaled.jpeg" alt="作者头像">
+                            <img class="inline-block h-10 w-10 rounded-full" src="http://q2.qlogo.cn/headimg_dl?dst_uin=1421733942&spec=100" alt="作者头像">
                         </div>
                         <div class="ml-3">
                             <p class="text-sm font-medium text-gray-700">小奏</p>
@@ -176,9 +174,9 @@ HTML;
                         </nav>
                          <div class="flex-shrink-0 p-4 border-t">
                             <div class="flex items-center">
-                                <div>
-                                    <img class="inline-block h-10 w-10 rounded-full" src="http://q2.qlogo.cn/headimg_dl?dst_uin=1421733942&spec=100" alt="作者头像">
-                                </div>
+                        <div>
+                            <img class="inline-block h-10 w-10 rounded-full" src="http://q2.qlogo.cn/headimg_dl?dst_uin=1421733942&spec=100" alt="作者头像">
+                        </div>
                                 <div class="ml-3">
                                     <p class="text-sm font-medium text-gray-700">小奏</p>
                                     <p class="text-xs text-gray-500">作者</p>
@@ -252,4 +250,3 @@ function render_nav_link($href, $icon, $text) {
 HTML;
 }
 ?>
-
